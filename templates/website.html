@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <title>Monitor de Temperaturas</title>
+        <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+        
+    </head>
+
+    <body>
+        <div class="h-screen flex">
+            <div class="w-64 bg-gray-100 px-8 py-4 border-r">
+                <img class="h-16 w-16" src={{url_for('static', filename='temperatura.png')}}/>
+            
+                <nav class="mt-8">
+
+                    <h3 class="text-xs font-semibold text-gray-600 uppercase tracnking-wider">Salas</h3>
+                    <div class="mt-2 -mx-3">
+
+                        {% for i in range(8) %}
+
+                            {% if i == sala %}
+                                <a href={{url_for('sala', id=i)}} class="flex justify-between bg-gray-200 rounded-lg px-3 py-2">
+                                    <span>Sala {{i}}</span>
+                                    <span>39º</span>
+                                </a>
+                            {% else %}
+                                <a href={{url_for('sala', id=i)}} class="flex justify-between rounded-lg px-3 py-2">
+                                    <span>Sala {{i}}</span>
+                                    <span>39º</span>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <!--<button class="mt-2 flex items-center text-sm font-medium text-gray-600">
+                        <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path 
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                d="M12 7v10m5-5H7"/>
+                        </svg>
+                        <span class="ml-1">Nova sala</span>
+                    </button>!-->
+                </nav>
+            </div>
+
+            <div class="flex-1 min-w-0 bg-white">
+                <div class="border-b-2 border-gray-200">
+                    <div class="px-6 py-2 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-900 leading-tight">Sala {{sala}}</h2>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <div>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+                    <canvas id="myChart" width="400" height="200" data-sala = {{sala}}></canvas>
+
+                    <script>
+                        var ctx = document.getElementById('myChart').getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: {{ timestamps | tojson }},
+                                datasets: [{
+                                    label: 'Sala 1',
+                                    backgroundColor: 'rgba(255, 29, 52, 0.9)',
+                                    borderColor: 'rgba(255, 29, 52, 0.9)',
+                                    data: {{ temps | tojson }}  ,
+                                    fill: false,
+                                }]
+                            },
+                            options: {
+                                title: {
+                                    display: true,
+                                    text: 'Temperaturas médias da sala'
+                                },
+                                hover: {
+                                    mode: 'nearest',
+                                    intersect: true
+                                },
+                                scales: {
+                                    xAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'Horário'
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'Temperatura em graus'
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>
