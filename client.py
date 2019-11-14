@@ -1,3 +1,7 @@
+"""
+Cliente WEB, mostra graficamente as informações de uma sala específica e dados sobre as medições mais recentes de todas as salas
+"""
+
 from flask import Flask, render_template, g, redirect, flash, Blueprint, request, session, url_for, redirect
 import requests
 
@@ -21,7 +25,7 @@ def sala(id):
     
 @app.route('/nova')
 def novaSala():
-    response = requests.post('http://localhost:5000/consumer').json()
+    response = requests.post('http://localhost:5000/sala').json()
     return redirect(url_for('sala', id = response['consumer']))
     
 if __name__ == '__main__':
