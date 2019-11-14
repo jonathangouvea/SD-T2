@@ -5,10 +5,18 @@ app = Flask(__name__)
 listaConsumer = []
 listaSalas = []
 
+@app.route('/recente', methods=['GET'])
+def getRecentes():
+    ret_json = []
+    for i in range(len(listaSalas)):
+        ret_json.append({
+            "sala": listaSalas[i],
+            "temp": listaConsumer[i].read_last()
+        })
+    return jsonify({'recente': ret_json})
+
 @app.route('/historico', methods=['GET'])
-def get_historicos():
-    print("## GET_USERS")
-    
+def getHistoricos():
     ret_dataset = []
     for consumer in listaConsumer:
         ret_dataset.extend(consumer.read())
@@ -24,9 +32,7 @@ def get_historicos():
     return jsonify({'historico': ret_json})
     
 @app.route('/historico/<int:id>', methods=['GET'])
-def get_historico(id):
-    print("## GET_USER")
-    
+def getHistorico(id):    
     ret_dataset = []
     for i in range(len(listaSalas)):
         if id == listaSalas[i]:
@@ -39,19 +45,21 @@ def get_historico(id):
             "timestamp": ret[1],
             "temp": ret[2]
         })
-    print(ret_json)
     return jsonify({'historico': ret_json})
     
 @app.route('/consumer', methods=['POST'])
-def post_user():
+def postUser():
     if not request.json or not 'id' in request.json:
-        abort(400)
+        id = listaSalas[-1] + 1
+    else:
+        id = int(request.json['id'])
     
-    listaConsumer.append(consumer(int(request.json['id'])))
+    listaConsumer.append(consumer(id))
     listaConsumer[-1].start()
-    listaSalas.append(int(request.json['id']))
+    listaSalas.append(id)
     
-    return jsonify({'consumer': int(request.json['id'])})
+    return jsonify({'consumer': id})
+    
     
 @app.errorhandler(404)
 def not_found(error):

@@ -12,10 +12,10 @@ class consumer():
         self.socket.connect("tcp://localhost:5556")
         self.socket.setsockopt_string(zmq.SUBSCRIBE, str(id))
         
-        self.basedados = []
-        self.basemedias = []
-        self.valores = []
-        self.read_lock = threading.Lock()
+        self.temperaturasMedias = []
+        self.ultimaTemperatura = 0
+        self.baseTemperaturas = []
+        self.readLock = threading.Lock()
         
         self.started = False
         
@@ -27,32 +27,33 @@ class consumer():
         
     def subscribe(self):
         raw_msg = self.socket.recv_string()
-    
         msg = json.loads(raw_msg.split(' ', 1)[1])
-        with self.read_lock:
-            self.basedados.append([msg["sala"], time.strftime('%X %x %Z'), msg["valor"]])
-            self.valores.append(msg["valor"])
-            if len(self.basedados) > 10:
-                self.basedados = self.basedados[-10:]
-                self.valores = self.valores[-10:]
-                
-            #print(sum(self.valores) / len(self.basedados))
-                
-            self.basemedias.append([
+        
+        self.baseTemperaturas.append(msg["valor"])
+        if len(self.baseTemperaturas) > 10:
+            self.baseTemperaturas = self.baseTemperaturas[-10:]
+        
+        with self.readLock:
+            self.temperaturasMedias.append([
                 msg["sala"], 
-                time.strftime('%X %x %Z'), 
-                sum(self.valores) / len(self.basedados)
+                time.strftime('%X'), 
+                "{:.2f}".format(sum(self.baseTemperaturas) / len(self.baseTemperaturas))
             ])
             
-            #print(self.basemedias)
+            self.ultimaTemperatura = "{:.2f}".format(sum(self.baseTemperaturas) / len(self.baseTemperaturas))
+            
             
     def update(self):
         while self.started:
             self.subscribe()
             
     def read(self):
-        with self.read_lock:
-            return self.basemedias
+        with self.readLock:
+            return self.temperaturasMedias
+    
+    def read_last(self):
+        with self.readLock:
+            return self.ultimaTemperatura
             
     def stop(self):
         self.started = False

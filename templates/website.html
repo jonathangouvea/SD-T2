@@ -15,22 +15,22 @@
                     <h3 class="text-xs font-semibold text-gray-600 uppercase tracnking-wider">Salas</h3>
                     <div class="mt-2 -mx-3">
 
-                        {% for i in range(8) %}
+                        {% for i in range(salas|length) %}
 
-                            {% if i == sala %}
-                                <a href={{url_for('sala', id=i)}} class="flex justify-between bg-gray-200 rounded-lg px-3 py-2">
-                                    <span>Sala {{i}}</span>
-                                    <span>39º</span>
+                            {% if salas[i] == sala %}
+                                <a href={{url_for('sala', id=salas[i])}} class="flex justify-between bg-gray-200 rounded-lg px-3 py-2">
+                                    <span>Sala {{salas[i]}}</span>
+                                    <span>{{last_temp[i]}} º</span>
                                 </a>
                             {% else %}
-                                <a href={{url_for('sala', id=i)}} class="flex justify-between rounded-lg px-3 py-2">
-                                    <span>Sala {{i}}</span>
-                                    <span>39º</span>
+                                <a href={{url_for('sala', id=salas[i])}} class="flex justify-between rounded-lg px-3 py-2">
+                                    <span>Sala {{salas[i]}}</span>
+                                    <span>{{last_temp[i]}} º</span>
                                 </a>
                             {% endif %}
                         {% endfor %}
                     </div>
-                    <!--<button class="mt-2 flex items-center text-sm font-medium text-gray-600">
+                    <a class="mt-2 flex items-center text-sm font-medium text-gray-600" href={{url_for('novaSala' )}}>
                         <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path 
                                 stroke="currentColor"
@@ -39,11 +39,11 @@
                                 d="M12 7v10m5-5H7"/>
                         </svg>
                         <span class="ml-1">Nova sala</span>
-                    </button>!-->
+                    </a>
                 </nav>
             </div>
 
-            <div class="flex-1 min-w-0 bg-white">
+            <div class="flex-1 min-w-0 bg-white border-b border-gray-200">
                 <div class="border-b-2 border-gray-200">
                     <div class="px-6 py-2 flex items-center justify-between">
                         <div>
@@ -54,7 +54,7 @@
                     
                 </div>
 
-                <div>
+                <div class="">
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
                     <canvas id="myChart" width="400" height="200" data-sala = {{sala}}></canvas>
@@ -66,7 +66,7 @@
                             data: {
                                 labels: {{ timestamps | tojson }},
                                 datasets: [{
-                                    label: 'Sala 1',
+                                    label: 'Sala {{sala}}',
                                     backgroundColor: 'rgba(255, 29, 52, 0.9)',
                                     borderColor: 'rgba(255, 29, 52, 0.9)',
                                     data: {{ temps | tojson }}  ,
@@ -103,6 +103,10 @@
                     </script>
                 </div>
             </div>
+        </div>
+        <div class="bg-gray-100 text-sm font-medium text-gray-600 leading-tight py-2 text-center">
+            Desenvolvido por Jonathan Gouvea da Silva, RA 727343<br>
+            <span class="text-xs">Novembro de 2019</span>
         </div>
     </body>
 
